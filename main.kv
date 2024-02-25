@@ -1,0 +1,165 @@
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+#:import Thread threading.Thread
+
+<VerificationDialog>:
+    size_hint: 1, None
+    height: dp(200)
+    orientation: "vertical"
+    spacing: dp(10)
+    padding: dp(0), dp(15)
+    md_bg_color: "#1F1F1F"
+
+    MDLabel:
+        id: preview_quote
+        text: ""
+    
+    MDBoxLayout:
+        orientation: "horizontal"
+        spacing: dp(20)
+
+        MDRaisedButton:
+            id: confirm_button
+            text: "Yes"
+            elevation: 0
+            disabled: True
+            on_press: app.delete_quote(preview_quote.text)
+
+        MDRaisedButton:
+            text: "Cancel"
+            elevation: 0
+            on_press: app.verification_dialog.dismiss()
+
+<QuoteContainer>:
+    size_hint: .85, None
+    adaptive_height: True
+    md_bg_color: "#00000000"
+    padding: dp(30), dp(30)
+    spacing: dp(10)
+    orientation: "vertical"
+
+<QuoteSaved>: 
+    id: quote_card
+    elevation: 0
+    size_hint: 1, None
+    adaptive_height: True
+    orientation: "vertical"
+    padding: dp(30), dp(30)
+    on_press: app.open_verification(quote_card)
+    spacing: dp(7)
+
+    MDLabel:
+        id: quote_card_text
+        text: ""
+        pos_hint_y: .5
+        halign: "left"
+        font_name: "NimbusSanL-Reg.otf"
+        font_size: dp(20)
+        adaptive_height: True
+
+    MDLabel:
+        id: quote_card_author
+        text: ""
+        font_size: dp(15)
+        font_name: "NimbusSanL-Reg.otf"
+        pos_hint_y: .5
+        halign: "left"
+        adaptive_height: True
+
+
+MDScreen:
+    MDBottomNavigation:
+        id: navigation
+        # text_color_normal: app.subtle
+        # text_color_active: app.primary
+        # panel_color: app.accent
+        transition: SlideTransition
+        transition_duration: .5
+
+        MDBottomNavigationItem:
+            icon: "format-quote-close"
+            text: "QoTD"
+            name: "screen 1"
+
+            MDFloatLayout:
+                id: main
+
+                QuoteContainer:
+                    pos_hint: {"center_x":.5, "center_y":.5}
+
+                    MDLabel:
+                        id: quote_text
+                        font_size: dp(27.5)
+                        adaptive_height: True
+                        text: ""
+                        font_name: "NimbusSanL-Bol.otf"
+
+                    MDLabel:
+                        id: quote_author
+                        font_size: dp(17.5)
+                        adaptive_height: True
+                        text: ""
+                        halign: "right"
+                        font_name: "NimbusSanL-Reg.otf"
+
+                MDBoxLayout:
+                    pos_hint: {'left': 1, 'top': 1}
+                    orientation: "horizontal"
+                    size_hint: None, None
+                    width: dp(150)
+                    height: dp(50)
+
+                    MDIconButton:
+                        icon: "content-save"
+                        id: save_button
+                        on_press: 
+                            app.save_quote()
+                            save_button.disabled = True
+                        theme_icon_color: "Custom"
+
+                    MDIconButton:
+                        id: theme_button
+                        icon: "pencil-box"
+                        on_press: app.theme_logic()
+                        theme_icon_color: "Custom"
+
+                    MDIconButton:
+                        id: refresh_button
+                        icon: "refresh"
+                        on_press: app.load_qotd()
+                        theme_icon_color: "Custom"
+
+        MDBottomNavigationItem:
+            icon: "format-list-bulleted"
+            text: "Saved"
+            name: "screen 2"
+
+            MDBoxLayout:
+                id: main_two
+                orientation: "vertical"
+                
+                MDBoxLayout:
+                    size_hint: 1, .125
+
+                    MDLabel:
+                        id: saved_title
+                        pos_hint: {"center_x":.5, "center_y":.2}
+                        halign: "center"
+                        font_name: "NimbusSanL-Bol.otf"
+                        text: "Saved Quotes"
+                        font_size: dp(20)
+
+                ScrollView:
+                    size_hint_y: .875
+                    do_scroll_y: True
+                    do_scroll_x: False
+
+                    GridLayout:
+                        spacing: 30, 5
+                        padding: 30, 30
+                        id: saved_container
+                        size: (root.width, root.height)
+                        size_hint_x: None
+                        size_hint_y: None
+                        cols: 1
+                        height: self.minimum_height
+
